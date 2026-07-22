@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    @apply bg-ink-50 text-ink-900 font-sans antialiased;
+  }
+  * {
+    @apply border-ink-200;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500/40 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 shadow-soft hover:shadow-card;
+  }
+  .btn-secondary {
+    @apply btn bg-white text-ink-700 border border-ink-200 hover:bg-ink-50 hover:border-ink-300;
+  }
+  .btn-ghost {
+    @apply btn text-ink-600 hover:bg-ink-100 hover:text-ink-900;
+  }
+  .btn-danger {
+    @apply btn bg-red-50 text-red-700 border border-red-200 hover:bg-red-100;
+  }
+  .input {
+    @apply w-full rounded-lg border border-ink-200 bg-white px-3.5 py-2.5 text-sm text-ink-900 placeholder:text-ink-400 transition-colors focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20;
+  }
+  .label {
+    @apply block text-sm font-medium text-ink-700 mb-1.5;
+  }
+  .card {
+    @apply rounded-xl border border-ink-200 bg-white shadow-soft;
+  }
+  .card-hover {
+    @apply card transition-all duration-300 hover:shadow-card hover:border-ink-300;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+  .badge-brand {
+    @apply badge bg-brand-50 text-brand-700;
+  }
+  .badge-green {
+    @apply badge bg-emerald-50 text-emerald-700;
+  }
+  .badge-amber {
+    @apply badge bg-amber-50 text-amber-700;
+  }
+  .badge-gray {
+    @apply badge bg-ink-100 text-ink-600;
+  }
+  .badge-red {
+    @apply badge bg-red-50 text-red-700;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-ink-300 rounded-full;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+}
