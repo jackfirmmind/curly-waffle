@@ -7,9 +7,10 @@ import EmptyState from '../ui/EmptyState';
 import FileUpload from '../ui/FileUpload';
 import { listFiles, deleteFileMetadata, uploadFile, type StoredFile } from '../../lib/storage';
 import { notifyCoach } from '../../lib/notify';
-import { FileText, Calendar, CheckCircle2, Clock, Building2, MapPin, MessageSquare, Paperclip, XCircle, AlertCircle, ListChecks, Video, FolderOpen, MessagesSquare } from 'lucide-react';
+import { FileText, Calendar, CheckCircle2, Clock, Building2, MapPin, MessageSquare, Paperclip, XCircle, AlertCircle, ListChecks, Video, FolderOpen, MessagesSquare, NotebookPen } from 'lucide-react';
 import MediaLibrary from '../ui/MediaLibrary';
 import ForumView from '../ui/ForumView';
+import SessionNotes from '../ui/SessionNotes';
 import type { Company, Assignment, Meeting, AssignmentSubmission, Participant, SubmissionStatus, AssignmentQuestion, AssignmentAnswer } from '../../lib/types';
 import { formatDate, formatDateTime, formatRelative, isOverdue, roleBadgeClass } from '../../lib/format';
 
@@ -32,7 +33,7 @@ export default function ParticipantDashboard() {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [submissions, setSubmissions] = useState<AssignmentSubmission[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<'assignments' | 'meetings' | 'media' | 'forum'>('assignments');
+  const [tab, setTab] = useState<'assignments' | 'meetings' | 'media' | 'forum' | 'notes'>('assignments');
 
   const [submitModal, setSubmitModal] = useState<AssignmentWithFiles | null>(null);
   const [submitText, setSubmitText] = useState('');
@@ -382,6 +383,9 @@ export default function ParticipantDashboard() {
         <button onClick={() => setTab('forum')} className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${tab === 'forum' ? 'border-brand-600 text-brand-700' : 'border-transparent text-ink-500 hover:text-ink-800'}`}>
           <MessagesSquare size={15} /> Forum
         </button>
+        <button onClick={() => setTab('notes')} className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${tab === 'notes' ? 'border-brand-600 text-brand-700' : 'border-transparent text-ink-500 hover:text-ink-800'}`}>
+          <NotebookPen size={15} /> Notes
+        </button>
       </div>
 
       {/* ASSIGNMENTS */}
@@ -524,6 +528,13 @@ export default function ParticipantDashboard() {
       {tab === 'forum' && company && (
         <div className="animate-fade-in">
           <ForumView companyId={company.id} isCoach={false} />
+        </div>
+      )}
+
+      {/* SESSION NOTES (shared only) */}
+      {tab === 'notes' && company && participant && (
+        <div className="animate-fade-in">
+          <SessionNotes companyId={company.id} participantId={participant.id} canEdit={false} />
         </div>
       )}
 

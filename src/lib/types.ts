@@ -198,3 +198,16 @@ export interface ForumPerson {
   vibeEmoji: string | null;
   isCoach: boolean;
 }
+
+export interface SessionNote {
+  id: string;
+  company_id: string;
+  participant_id: string;
+  author_id: string;
+  session_date: string;
+  title: string | null;
+  body: string;
+  shared_with_participant: boolean;
+  created_at: string;
+  updated_at: string;
+}

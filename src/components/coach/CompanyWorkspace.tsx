@@ -7,9 +7,10 @@ import Avatar from '../ui/Avatar';
 import ProfileModal from '../ui/ProfileModal';
 import MediaLibrary from '../ui/MediaLibrary';
 import ForumView from '../ui/ForumView';
+import SessionNotes from '../ui/SessionNotes';
 import { listFiles, type StoredFile } from '../../lib/storage';
 import { notifyParticipants } from '../../lib/notify';
-import { Plus, Pencil, Trash2, Mail, UserPlus, ArrowLeft, Users, FileText, Calendar, CheckCircle2, Clock, XCircle, MessageSquare, ListChecks, AlertCircle, ChevronUp, ChevronDown, Paperclip, FolderOpen, MessagesSquare } from 'lucide-react';
+import { Plus, Pencil, Trash2, Mail, UserPlus, ArrowLeft, Users, FileText, Calendar, CheckCircle2, Clock, XCircle, MessageSquare, ListChecks, AlertCircle, ChevronUp, ChevronDown, Paperclip, FolderOpen, MessagesSquare, NotebookPen } from 'lucide-react';
 import type { Company, Participant, ParticipantRole, Assignment, AssignmentSubmission, Meeting, SubmissionStatus, AssignmentQuestion, AssignmentAnswer, QuestionType } from '../../lib/types';
 import { formatDate, formatDateTime, formatRelative, initials, isOverdue, roleBadgeClass } from '../../lib/format';
 
@@ -19,7 +20,7 @@ interface Props {
   initialTab?: Tab;
 }
 
-type Tab = 'participants' | 'assignments' | 'meetings' | 'reviews' | 'media' | 'forum';
+type Tab = 'participants' | 'assignments' | 'meetings' | 'reviews' | 'media' | 'forum' | 'notes';
 
 interface AssignmentWithMeta extends Assignment {
   recipientCount: number;
@@ -74,6 +75,7 @@ export default function CompanyWorkspace({ company, onBack, initialTab }: Props)
   const [reviewModal, setReviewModal] = useState<SubmissionWithMeta | null>(null);
   const [viewProfile, setViewProfile] = useState<Participant | null>(null);
   const [mediaTarget, setMediaTarget] = useState<string>('__coach__');
+  const [notesTarget, setNotesTarget] = useState<string>('');
   const [reviewFeedback, setReviewFeedback] = useState('');
   const [reviewStatus, setReviewStatus] = useState<SubmissionStatus>('reviewed');
 
@@ -403,6 +405,7 @@ export default function CompanyWorkspace({ company, onBack, initialTab }: Props)
     { id: 'reviews', label: 'Reviews', icon: CheckCircle2, count: submissions.filter((s) => s.status !== 'submitted' && s.status !== 'draft').length },
     { id: 'media', label: 'Media', icon: FolderOpen, count: participants.length },
     { id: 'forum', label: 'Forum', icon: MessagesSquare, count: 0 },
+    { id: 'notes', label: 'Notes', icon: NotebookPen, count: participants.length },
   ];
 
   const statusBadge = (status: SubmissionStatus) => {
@@ -726,6 +729,32 @@ export default function CompanyWorkspace({ company, onBack, initialTab }: Props)
           {/* FORUM */}
           {tab === 'forum' && (
             <ForumView companyId={company.id} isCoach={true} />
+          )}
+
+          {/* SESSION NOTES */}
+          {tab === 'notes' && (
+            <div>
+              <div className="mb-4">
+                <label className="label">Whose notes</label>
+                <select className="input w-auto min-w-[240px]" value={notesTarget}
+                  onChange={(e) => setNotesTarget(e.target.value)}>
+                  <option value="">Select a person...</option>
+                  {participants.map((p) => (
+                    <option key={p.id} value={p.id}>{p.full_name}</option>
+                  ))}
+                </select>
+                <p className="mt-1.5 text-xs text-ink-500">
+                  Your running record for this person. Private to you unless you share a note.
+                </p>
+              </div>
+
+              {notesTarget ? (
+                <SessionNotes key={notesTarget} companyId={company.id} participantId={notesTarget} canEdit={true} />
+              ) : (
+                <EmptyState icon={<NotebookPen size={22} />} title="Pick a person"
+                  description="Choose someone above to see and add their session notes." />
+              )}
+            </div>
           )}
         </div>
       )}
