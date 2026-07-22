@@ -4,14 +4,14 @@ import { AuthProvider, useAuth } from './lib/AuthContext';
 import { ToastProvider } from './components/ui/Toast';
 import AuthPage from './components/AuthPage';
 import AppShell from './components/AppShell';
-import OverviewView from './components/consultant/OverviewView';
-import CompaniesView from './components/consultant/CompaniesView';
-import CompanyWorkspace from './components/consultant/CompanyWorkspace';
+import OverviewView from './components/coach/OverviewView';
+import CompaniesView from './components/coach/CompaniesView';
+import CompanyWorkspace from './components/coach/CompanyWorkspace';
 import ParticipantDashboard from './components/participant/ParticipantDashboard';
 import { LayoutDashboard, Building2 } from 'lucide-react';
 import type { Company } from './lib/types';
 
-function ConsultantApp() {
+function CoachApp() {
   const [view, setView] = useState<string>('overview');
   const [openCompany, setOpenCompany] = useState<Company | null>(null);
   const [workspaceTab, setWorkspaceTab] = useState<string>('participants');
@@ -102,7 +102,7 @@ function Root() {
 
   if (!user) return <AuthPage />;
 
-  return user.role === 'consultant' ? <ConsultantApp /> : <ParticipantApp />;
+  return user.role === 'consultant' ? <CoachApp /> : <ParticipantApp />;
 }
 
 export default function App() {

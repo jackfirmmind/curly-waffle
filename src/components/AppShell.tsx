@@ -4,6 +4,7 @@ import { Sparkles, LogOut, Menu, ChevronRight, User as UserIcon } from 'lucide-r
 import NotificationBell from './ui/NotificationBell';
 import Avatar from './ui/Avatar';
 import ProfileModal from './ui/ProfileModal';
+import SupportButton from './ui/SupportButton';
 
 export interface NavItem {
   id: string;
@@ -151,6 +152,7 @@ export default function AppShell({ navItems, activeView, onNavigate, children, r
       </div>
 
       <ProfileModal open={profileOpen} onClose={() => setProfileOpen(false)} mode="self" />
+      <SupportButton />
     </div>
   );
 }

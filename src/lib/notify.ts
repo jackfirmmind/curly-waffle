@@ -18,7 +18,7 @@ export async function notifyParticipants(
   });
 }
 
-export async function notifyConsultant(
+export async function notifyCoach(
   companyId: string,
   type: 'submission_received',
   title: string,

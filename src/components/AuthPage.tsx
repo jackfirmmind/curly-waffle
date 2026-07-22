@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useAuth } from '../lib/AuthContext';
 import { Briefcase, Users, ArrowRight, Mail, Lock, User, Sparkles } from 'lucide-react';
+import SupportButton from './ui/SupportButton';
 import type { UserRole } from '../lib/types';
 
 type Mode = 'signin' | 'signup';
@@ -46,57 +47,19 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left panel - branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-brand-700 via-brand-800 to-brand-950">
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(255,255,255,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.2) 0%, transparent 50%)',
-        }} />
-        <div className="relative z-10 flex flex-col justify-between p-12 text-white">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur border border-white/20">
-              <Sparkles size={20} />
-            </div>
-            <span className="font-display text-xl font-bold tracking-tight">Portal</span>
-          </div>
+    <div className="min-h-screen bg-ink-50 flex flex-col items-center justify-center px-6 py-10">
+      <SupportButton />
 
-          <div className="max-w-md">
-            <h1 className="font-display text-4xl font-bold leading-tight">
-              One place for your whole team to work better.
-            </h1>
-            <p className="mt-4 text-brand-100 text-lg leading-relaxed">
-              Plan tasks, share updates, and stay in sync. Whether you coach, lead, manage, or take part, Portal keeps your work clear and simple.
-            </p>
-            <div className="mt-10 space-y-4">
-              {[
-                { icon: Briefcase, text: 'Set up spaces for each team or group' },
-                { icon: Users, text: 'See what each person is working on' },
-                { icon: Sparkles, text: 'Tasks, schedules, and notes in one place' },
-              ].map((f, i) => (
-                <div key={i} className="flex items-center gap-3 text-brand-50">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 border border-white/15">
-                    <f.icon size={16} />
-                  </div>
-                  <span className="text-sm">{f.text}</span>
-                </div>
-              ))}
-            </div>
+      <div className="w-full max-w-md animate-fade-in">
+        {/* Brand */}
+        <div className="flex items-center justify-center gap-2.5 mb-8">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-600 text-white">
+            <Sparkles size={22} />
           </div>
-
-          <p className="text-xs text-brand-200/70">© 2026 Portal. Built for everyone on the team.</p>
+          <span className="font-display text-2xl font-bold tracking-tight text-ink-900">Portal</span>
         </div>
-      </div>
 
-      {/* Right panel - form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-ink-50">
-        <div className="w-full max-w-md animate-fade-in">
-          <div className="lg:hidden flex items-center gap-2.5 mb-8">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 text-white">
-              <Sparkles size={20} />
-            </div>
-            <span className="font-display text-xl font-bold tracking-tight text-ink-900">Portal</span>
-          </div>
-
+        <div className="rounded-2xl border border-ink-200 bg-white p-7 shadow-soft sm:p-8">
           <h2 className="font-display text-2xl font-bold text-ink-900">
             {mode === 'signin' ? 'Welcome back' : 'Create your account'}
           </h2>

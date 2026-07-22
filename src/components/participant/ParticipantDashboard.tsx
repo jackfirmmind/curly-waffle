@@ -6,7 +6,7 @@ import Modal from '../ui/Modal';
 import EmptyState from '../ui/EmptyState';
 import FileUpload from '../ui/FileUpload';
 import { listFiles, deleteFileMetadata, uploadFile, type StoredFile } from '../../lib/storage';
-import { notifyConsultant } from '../../lib/notify';
+import { notifyCoach } from '../../lib/notify';
 import { FileText, Calendar, CheckCircle2, Clock, Building2, MapPin, MessageSquare, Paperclip, XCircle, AlertCircle, ListChecks, Video, FolderOpen, MessagesSquare } from 'lucide-react';
 import MediaLibrary from '../ui/MediaLibrary';
 import ForumView from '../ui/ForumView';
@@ -202,7 +202,7 @@ export default function ParticipantDashboard() {
 
     // Notify coach
     if (company && !existingSubmission) {
-      await notifyConsultant(company.id, 'submission_received', `New submission: ${submitModal.title}`, participant?.full_name, `company:${company.id}:assignments`);
+      await notifyCoach(company.id, 'submission_received', `New submission: ${submitModal.title}`, participant?.full_name, `company:${company.id}:assignments`);
     }
 
     show('Assignment submitted!');
@@ -395,7 +395,7 @@ export default function ParticipantDashboard() {
               const sub = submissions.find((s) => s.assignment_id === a.id);
               const overdue = isOverdue(a.due_date) && !sub;
               const hasQuestions = a.questions.length > 0;
-              const hasConsultantFeedback = sub?.consultant_feedback && sub.status !== 'submitted' && sub.status !== 'draft';
+              const hasCoachFeedback = sub?.consultant_feedback && sub.status !== 'submitted' && sub.status !== 'draft';
               return (
                 <div key={a.id} className={`card-hover p-5 ${overdue ? 'border-red-200 bg-red-50/30' : ''}`}>
                   <div className="flex items-start justify-between gap-4">
@@ -419,8 +419,8 @@ export default function ParticipantDashboard() {
                           <p className="text-xs text-ink-400 mt-1.5">Submitted {formatDate(sub.submitted_at)}</p>
                         </div>
                       )}
-                      {/* Consultant Feedback section */}
-                      {hasConsultantFeedback && (
+                      {/* Coach feedback section */}
+                      {hasCoachFeedback && (
                         <div className="mt-2 rounded-lg bg-brand-50 border border-brand-200 p-4">
                           <div className="flex items-center gap-2 mb-2">
                             <MessageSquare size={14} className="text-brand-600" />
