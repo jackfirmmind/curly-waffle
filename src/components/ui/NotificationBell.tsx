@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Bell, CheckCheck, FileText, Calendar, Star, MessageSquare } from 'lucide-react';
+import { Bell, CheckCheck, FileText, Calendar, Star, MessageSquare, FolderOpen } from 'lucide-react';
 import { useNotifications } from '../../lib/useNotifications';
 import { formatRelative } from '../../lib/format';
 import type { NotificationType } from '../../lib/types';
@@ -9,6 +9,7 @@ const iconMap: Record<NotificationType, typeof Bell> = {
   submission_received: MessageSquare,
   feedback_received: Star,
   meeting_scheduled: Calendar,
+  media_uploaded: FolderOpen,
 };
 
 const colorMap: Record<NotificationType, string> = {
@@ -16,6 +17,7 @@ const colorMap: Record<NotificationType, string> = {
   submission_received: 'bg-emerald-50 text-emerald-600',
   feedback_received: 'bg-amber-50 text-amber-600',
   meeting_scheduled: 'bg-violet-50 text-violet-600',
+  media_uploaded: 'bg-sky-50 text-sky-600',
 };
 
 interface Props {

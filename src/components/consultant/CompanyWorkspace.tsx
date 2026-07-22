@@ -1051,6 +1051,8 @@ export default function CompanyWorkspace({ company, onBack, initialTab }: Props)
           status: viewProfile.status,
           vibeEmoji: viewProfile.vibe_emoji,
           roleLabel: viewProfile.role,
+          companyId: company.id,
+          participantId: viewProfile.id,
         } : undefined}
       />
     </div>

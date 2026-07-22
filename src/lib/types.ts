@@ -4,7 +4,7 @@ export type UserRole = 'consultant' | 'participant';
 
 export type SubmissionStatus = 'draft' | 'submitted' | 'reviewed' | 'approved' | 'changes_requested';
 
-export type NotificationType = 'new_assignment' | 'submission_received' | 'feedback_received' | 'meeting_scheduled';
+export type NotificationType = 'new_assignment' | 'submission_received' | 'feedback_received' | 'meeting_scheduled' | 'media_uploaded';
 
 export type QuestionType = 'short_text' | 'long_text' | 'multiple_choice' | 'checkboxes' | 'file_upload';
 
@@ -138,7 +138,7 @@ export interface AuthUser {
 // The 7 "coaching vibe" emojis — used for profile emoji + post reactions.
 export const VIBE_EMOJIS = ['💪', '🔥', '🎯', '🌱', '🙌', '💡', '⭐'] as const;
 
-export type MediaVisibility = 'one_on_one' | 'private';
+export type MediaVisibility = 'public' | 'private' | 'coach_only';
 
 export interface MediaItem {
   id: string;

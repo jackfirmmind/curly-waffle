@@ -27,7 +27,7 @@ export default function MediaLibrary({ companyId, participantId, canChoosePrivat
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [pendingVisibility, setPendingVisibility] = useState<MediaVisibility>('one_on_one');
+  const [pendingVisibility, setPendingVisibility] = useState<MediaVisibility>('private');
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -51,7 +51,7 @@ export default function MediaLibrary({ companyId, participantId, canChoosePrivat
         companyId,
         participantId,
         uploadedBy: user.id,
-        visibility: canChoosePrivate ? pendingVisibility : 'one_on_one',
+        visibility: !canChoosePrivate && pendingVisibility === 'coach_only' ? 'private' : pendingVisibility,
       });
       if (error) show(error, 'error'); else ok++;
     }
@@ -81,8 +81,10 @@ export default function MediaLibrary({ companyId, participantId, canChoosePrivat
     show('File deleted.', 'success');
   };
 
-  const onToggleVisibility = async (item: MediaItem) => {
-    const next: MediaVisibility = item.visibility === 'private' ? 'one_on_one' : 'private';
+  // Coaches can re-scope anything here; others only their own uploads.
+  const canEditItem = (item: MediaItem) => canChoosePrivate || item.uploaded_by === user?.id;
+
+  const onChangeVisibility = async (item: MediaItem, next: MediaVisibility) => {
     setBusyId(item.id);
     const ok = await setVisibility(item.id, next);
     setBusyId(null);
@@ -99,17 +101,16 @@ export default function MediaLibrary({ companyId, participantId, canChoosePrivat
         </div>
 
         <div className="flex items-center gap-2">
-          {canChoosePrivate && (
-            <select
-              className="input py-2 text-sm w-auto"
-              value={pendingVisibility}
-              onChange={(e) => setPendingVisibility(e.target.value as MediaVisibility)}
-              title="Privacy for new uploads"
-            >
-              <option value="one_on_one">1-on-1</option>
-              <option value="private">Private (coaches only)</option>
-            </select>
-          )}
+          <select
+            className="input py-2 text-sm w-auto"
+            value={pendingVisibility}
+            onChange={(e) => setPendingVisibility(e.target.value as MediaVisibility)}
+            title="Who can see new uploads"
+          >
+            <option value="private">Private — this person + coach</option>
+            <option value="public">Public — everyone in the company</option>
+            {canChoosePrivate && <option value="coach_only">Coach only — hidden from them</option>}
+          </select>
           <input ref={fileRef} type="file" multiple className="hidden" onChange={onPick} />
           <button onClick={() => fileRef.current?.click()} disabled={uploading} className="btn-primary inline-flex items-center gap-2">
             {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
@@ -142,25 +143,28 @@ export default function MediaLibrary({ companyId, participantId, canChoosePrivat
                   <span>{formatSize(item.file_size)}</span>
                   <span>·</span>
                   <span
-                    className={`inline-flex items-center gap-1 ${item.visibility === 'private' ? 'text-amber-700' : 'text-ink-500'}`}
+                    className={`inline-flex items-center gap-1 ${item.visibility === 'coach_only' ? 'text-amber-700' : 'text-ink-500'}`}
                     title={VISIBILITY_HINT[item.visibility]}
                   >
-                    {item.visibility === 'private' ? <Lock size={11} /> : <Users size={11} />}
+                    {item.visibility === 'public' ? <Users size={11} /> : <Lock size={11} />}
                     {VISIBILITY_LABEL[item.visibility]}
                   </span>
                 </div>
               </div>
 
               <div className="flex shrink-0 items-center gap-1">
-                {canChoosePrivate && (
-                  <button
-                    onClick={() => onToggleVisibility(item)}
+                {canEditItem(item) && (
+                  <select
+                    value={item.visibility}
                     disabled={busyId === item.id}
-                    className="rounded-md p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
-                    title={item.visibility === 'private' ? 'Make 1-on-1' : 'Make private (coaches only)'}
+                    onChange={(e) => onChangeVisibility(item, e.target.value as MediaVisibility)}
+                    className="rounded-md border border-ink-200 bg-white px-1.5 py-1 text-xs text-ink-600 hover:border-ink-300"
+                    title="Who can see this file"
                   >
-                    {item.visibility === 'private' ? <Lock size={15} /> : <Users size={15} />}
-                  </button>
+                    <option value="private">Private</option>
+                    <option value="public">Public</option>
+                    {canChoosePrivate && <option value="coach_only">Coach only</option>}
+                  </select>
                 )}
                 <button
                   onClick={() => onOpen(item)}

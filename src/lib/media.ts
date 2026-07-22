@@ -95,11 +95,13 @@ export async function setVisibility(id: string, visibility: MediaVisibility): Pr
 }
 
 export const VISIBILITY_LABEL: Record<MediaVisibility, string> = {
-  one_on_one: '1-on-1',
+  public: 'Public',
   private: 'Private',
+  coach_only: 'Coach only',
 };
 
 export const VISIBILITY_HINT: Record<MediaVisibility, string> = {
-  one_on_one: 'Visible to this person and their coach',
-  private: 'Visible to coaches only',
+  public: 'Everyone in the company can see this',
+  private: 'Only this person and their coach',
+  coach_only: 'Only the coach — this person cannot see it',
 };

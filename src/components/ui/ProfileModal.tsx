@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Modal from './Modal';
 import Avatar from './Avatar';
 import { useAuth } from '../../lib/AuthContext';
@@ -6,6 +6,7 @@ import { useToast } from './Toast';
 import { supabase } from '../../lib/supabase';
 import { VIBE_EMOJIS } from '../../lib/types';
 import { Upload, Loader2 } from 'lucide-react';
+import MediaLibrary from './MediaLibrary';
 
 export interface ProfileData {
   name: string;
@@ -14,6 +15,9 @@ export interface ProfileData {
   status?: string | null;
   vibeEmoji?: string | null;
   roleLabel?: string | null;
+  /** Enables the Files section on this profile. */
+  companyId?: string | null;
+  participantId?: string | null;
 }
 
 interface Props {
@@ -23,9 +27,11 @@ interface Props {
   mode: 'self' | 'view';
   /** Required for 'view' mode. */
   profile?: ProfileData;
+  /** Company context so the profile can show that person's files. */
+  companyId?: string | null;
 }
 
-export default function ProfileModal({ open, onClose, mode, profile }: Props) {
+export default function ProfileModal({ open, onClose, mode, profile, companyId }: Props) {
   const { user, refreshUser } = useAuth();
   const { show } = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -35,6 +41,20 @@ export default function ProfileModal({ open, onClose, mode, profile }: Props) {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(user?.avatarUrl || null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [ownCompanyId, setOwnCompanyId] = useState<string | null>(companyId ?? null);
+
+  // A participant always has exactly one company — resolve it so their own
+  // profile can show their files without the caller passing it in.
+  useEffect(() => {
+    if (companyId) { setOwnCompanyId(companyId); return; }
+    if (!open || mode !== 'self' || user?.role === 'consultant' || !user?.participantId) return;
+    supabase
+      .from('participants')
+      .select('company_id')
+      .eq('id', user.participantId)
+      .maybeSingle()
+      .then(({ data }) => setOwnCompanyId(data?.company_id ?? null));
+  }, [open, mode, companyId, user?.role, user?.participantId]);
 
   const table = user?.role === 'consultant' ? 'consultants' : 'participants';
 
@@ -80,7 +100,7 @@ export default function ProfileModal({ open, onClose, mode, profile }: Props) {
   // ---- VIEW (read-only) ----
   if (mode === 'view' && profile) {
     return (
-      <Modal open={open} onClose={onClose} title="Profile">
+      <Modal open={open} onClose={onClose} title="Profile" size="lg">
         <div className="flex flex-col items-center text-center gap-3 py-2">
           <Avatar name={profile.name} avatarUrl={profile.avatarUrl} emoji={profile.vibeEmoji} size="xl" />
           <div>
@@ -94,13 +114,25 @@ export default function ProfileModal({ open, onClose, mode, profile }: Props) {
             </a>
           )}
         </div>
+
+        {profile.companyId && (
+          <div className="mt-6 border-t border-ink-100 pt-5">
+            <MediaLibrary
+              companyId={profile.companyId}
+              participantId={profile.participantId ?? null}
+              canChoosePrivate={user?.role === 'consultant'}
+              title="Files"
+              emptyHint="No files on this profile yet."
+            />
+          </div>
+        )}
       </Modal>
     );
   }
 
   // ---- SELF (edit) ----
   return (
-    <Modal open={open} onClose={onClose} title="Your profile" description="Customize how you appear to others.">
+    <Modal open={open} onClose={onClose} title="Your profile" description="Customize how you appear to others." size="lg">
       <div className="space-y-6">
         <div className="flex items-center gap-4">
           <Avatar name={user?.fullName || user?.email || '?'} avatarUrl={avatarUrl} emoji={emoji} size="xl" />
@@ -139,6 +171,18 @@ export default function ProfileModal({ open, onClose, mode, profile }: Props) {
             ))}
           </div>
         </div>
+
+        {ownCompanyId && (
+          <div className="border-t border-ink-100 pt-5">
+            <MediaLibrary
+              companyId={ownCompanyId}
+              participantId={user?.role === 'consultant' ? null : user?.participantId ?? null}
+              canChoosePrivate={user?.role === 'consultant'}
+              title="Your files"
+              emptyHint="Upload files to keep on your profile."
+            />
+          </div>
+        )}
 
         <div className="flex justify-end gap-2 pt-2 border-t border-ink-100">
           <button onClick={onClose} className="btn-secondary">Cancel</button>
