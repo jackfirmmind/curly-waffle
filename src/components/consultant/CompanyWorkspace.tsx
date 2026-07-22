@@ -6,9 +6,10 @@ import EmptyState from '../ui/EmptyState';
 import Avatar from '../ui/Avatar';
 import ProfileModal from '../ui/ProfileModal';
 import MediaLibrary from '../ui/MediaLibrary';
+import ForumView from '../ui/ForumView';
 import { listFiles, type StoredFile } from '../../lib/storage';
 import { notifyParticipants } from '../../lib/notify';
-import { Plus, Pencil, Trash2, Mail, UserPlus, ArrowLeft, Users, FileText, Calendar, CheckCircle2, Clock, XCircle, MessageSquare, ListChecks, AlertCircle, ChevronUp, ChevronDown, Paperclip, FolderOpen } from 'lucide-react';
+import { Plus, Pencil, Trash2, Mail, UserPlus, ArrowLeft, Users, FileText, Calendar, CheckCircle2, Clock, XCircle, MessageSquare, ListChecks, AlertCircle, ChevronUp, ChevronDown, Paperclip, FolderOpen, MessagesSquare } from 'lucide-react';
 import type { Company, Participant, ParticipantRole, Assignment, AssignmentSubmission, Meeting, SubmissionStatus, AssignmentQuestion, AssignmentAnswer, QuestionType } from '../../lib/types';
 import { formatDate, formatDateTime, formatRelative, initials, isOverdue, roleBadgeClass } from '../../lib/format';
 
@@ -18,7 +19,7 @@ interface Props {
   initialTab?: Tab;
 }
 
-type Tab = 'participants' | 'assignments' | 'meetings' | 'reviews' | 'media';
+type Tab = 'participants' | 'assignments' | 'meetings' | 'reviews' | 'media' | 'forum';
 
 interface AssignmentWithMeta extends Assignment {
   recipientCount: number;
@@ -401,6 +402,7 @@ export default function CompanyWorkspace({ company, onBack, initialTab }: Props)
     { id: 'meetings', label: 'Meetings', icon: Calendar, count: meetings.length },
     { id: 'reviews', label: 'Reviews', icon: CheckCircle2, count: submissions.filter((s) => s.status !== 'submitted' && s.status !== 'draft').length },
     { id: 'media', label: 'Media', icon: FolderOpen, count: participants.length },
+    { id: 'forum', label: 'Forum', icon: MessagesSquare, count: 0 },
   ];
 
   const statusBadge = (status: SubmissionStatus) => {
@@ -719,6 +721,11 @@ export default function CompanyWorkspace({ company, onBack, initialTab }: Props)
                   : 'Upload documents, images, or video for this person.'}
               />
             </div>
+          )}
+
+          {/* FORUM */}
+          {tab === 'forum' && (
+            <ForumView companyId={company.id} isCoach={true} />
           )}
         </div>
       )}

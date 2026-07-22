@@ -7,8 +7,9 @@ import EmptyState from '../ui/EmptyState';
 import FileUpload from '../ui/FileUpload';
 import { listFiles, deleteFileMetadata, uploadFile, type StoredFile } from '../../lib/storage';
 import { notifyConsultant } from '../../lib/notify';
-import { FileText, Calendar, CheckCircle2, Clock, Building2, MapPin, MessageSquare, Paperclip, XCircle, AlertCircle, ListChecks, Video, FolderOpen } from 'lucide-react';
+import { FileText, Calendar, CheckCircle2, Clock, Building2, MapPin, MessageSquare, Paperclip, XCircle, AlertCircle, ListChecks, Video, FolderOpen, MessagesSquare } from 'lucide-react';
 import MediaLibrary from '../ui/MediaLibrary';
+import ForumView from '../ui/ForumView';
 import type { Company, Assignment, Meeting, AssignmentSubmission, Participant, SubmissionStatus, AssignmentQuestion, AssignmentAnswer } from '../../lib/types';
 import { formatDate, formatDateTime, formatRelative, isOverdue, roleBadgeClass } from '../../lib/format';
 
@@ -31,7 +32,7 @@ export default function ParticipantDashboard() {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [submissions, setSubmissions] = useState<AssignmentSubmission[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<'assignments' | 'meetings' | 'media'>('assignments');
+  const [tab, setTab] = useState<'assignments' | 'meetings' | 'media' | 'forum'>('assignments');
 
   const [submitModal, setSubmitModal] = useState<AssignmentWithFiles | null>(null);
   const [submitText, setSubmitText] = useState('');
@@ -378,6 +379,9 @@ export default function ParticipantDashboard() {
         <button onClick={() => setTab('media')} className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${tab === 'media' ? 'border-brand-600 text-brand-700' : 'border-transparent text-ink-500 hover:text-ink-800'}`}>
           <FolderOpen size={15} /> Media
         </button>
+        <button onClick={() => setTab('forum')} className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${tab === 'forum' ? 'border-brand-600 text-brand-700' : 'border-transparent text-ink-500 hover:text-ink-800'}`}>
+          <MessagesSquare size={15} /> Forum
+        </button>
       </div>
 
       {/* ASSIGNMENTS */}
@@ -513,6 +517,13 @@ export default function ParticipantDashboard() {
             canChoosePrivate={false}
             emptyHint="Upload your own files here, or see what your coach has shared with you."
           />
+        </div>
+      )}
+
+      {/* FORUM */}
+      {tab === 'forum' && company && (
+        <div className="animate-fade-in">
+          <ForumView companyId={company.id} isCoach={false} />
         </div>
       )}
 

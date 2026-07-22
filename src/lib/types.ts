@@ -152,3 +152,49 @@ export interface MediaItem {
   visibility: MediaVisibility;
   created_at: string;
 }
+
+export interface ForumTopic {
+  id: string;
+  company_id: string;
+  created_by: string;
+  title: string;
+  description: string | null;
+  is_locked: boolean;
+  created_at: string;
+}
+
+export interface ForumPost {
+  id: string;
+  topic_id: string;
+  company_id: string;
+  author_id: string;
+  body: string;
+  created_at: string;
+}
+
+export interface ForumComment {
+  id: string;
+  post_id: string;
+  company_id: string;
+  author_id: string;
+  body: string;
+  created_at: string;
+}
+
+export interface ForumReaction {
+  id: string;
+  post_id: string;
+  company_id: string;
+  user_id: string;
+  emoji: string;
+  created_at: string;
+}
+
+/** Display info for whoever wrote a post/comment. */
+export interface ForumPerson {
+  userId: string;
+  name: string;
+  avatarUrl: string | null;
+  vibeEmoji: string | null;
+  isCoach: boolean;
+}
