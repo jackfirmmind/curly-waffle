@@ -10,7 +10,7 @@ import ForumView from '../ui/ForumView';
 import SessionNotes from '../ui/SessionNotes';
 import { listFiles, type StoredFile } from '../../lib/storage';
 import { notifyParticipants } from '../../lib/notify';
-import { Plus, Pencil, Trash2, Mail, UserPlus, ArrowLeft, Users, FileText, Calendar, CheckCircle2, Clock, XCircle, MessageSquare, ListChecks, AlertCircle, ChevronUp, ChevronDown, Paperclip, FolderOpen, MessagesSquare, NotebookPen } from 'lucide-react';
+import { Plus, Pencil, Trash2, Mail, UserPlus, ArrowLeft, Users, FileText, Calendar, CheckCircle2, Clock, XCircle, MessageSquare, ListChecks, AlertCircle, ChevronUp, ChevronDown, Paperclip, FolderOpen, MessagesSquare, NotebookPen, Video } from 'lucide-react';
 import type { Company, Participant, ParticipantRole, Assignment, AssignmentSubmission, Meeting, SubmissionStatus, AssignmentQuestion, AssignmentAnswer, QuestionType } from '../../lib/types';
 import { formatDate, formatDateTime, formatRelative, initials, isOverdue, roleBadgeClass } from '../../lib/format';
 
@@ -398,6 +398,9 @@ export default function CompanyWorkspace({ company, onBack, initialTab }: Props)
 
   ;
 
+  const meetingUrl = (loc: string | null): string | null =>
+    (loc && /^https?:\/\//i.test(loc.trim()) ? loc.trim() : null);
+
   const tabs: { id: Tab; label: string; icon: typeof Users; count: number }[] = [
     { id: 'participants', label: 'Participants', icon: Users, count: participants.length },
     { id: 'assignments', label: 'Assignments', icon: FileText, count: assignments.length },
@@ -646,11 +649,17 @@ export default function CompanyWorkspace({ company, onBack, initialTab }: Props)
                             </div>
                             <div>
                               <h3 className="font-display text-base font-semibold text-ink-900">{m.title}</h3>
-                              <p className="mt-0.5 text-sm text-ink-600">{formatDateTime(m.scheduled_at)} · {m.duration_minutes} min{m.location && ` · ${m.location}`}</p>
+                              <p className="mt-0.5 text-sm text-ink-600">{formatDateTime(m.scheduled_at)} · {m.duration_minutes} min{m.location && !meetingUrl(m.location) && ` · ${m.location}`}</p>
                               {m.description && <p className="mt-1.5 text-sm text-ink-500 line-clamp-2">{m.description}</p>}
                             </div>
                           </div>
-                          <div className="flex gap-1">
+                          <div className="flex shrink-0 items-center gap-1">
+                            {meetingUrl(m.location) && !past && (
+                              <a href={meetingUrl(m.location)!} target="_blank" rel="noopener noreferrer"
+                                className="btn-primary mr-1 whitespace-nowrap inline-flex items-center gap-1.5 px-3 py-1.5 text-sm">
+                                <Video size={14} /> Join
+                              </a>
+                            )}
                             <button onClick={() => openEditM(m)} className="rounded-md p-1.5 text-ink-400 hover:bg-ink-100"><Pencil size={14} /></button>
                             <button onClick={() => removeM(m)} className="rounded-md p-1.5 text-ink-400 hover:bg-red-50 hover:text-red-600"><Trash2 size={14} /></button>
                           </div>
